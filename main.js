@@ -1,16 +1,15 @@
+// ************************************************* //
+
 require("dotenv").config();
 const debug = require("./debug");
 const path = require("path");
-const { token, server_id } = require("./config/config.json");
+const { token } = require("./config/config.json");
 
 const {
   Client,
   GatewayIntentBits,
   Partials,
   Collection,
-  REST,
-  Routes,
-  Events,
 } = require("discord.js");
 
 const client = new Client({
@@ -24,6 +23,8 @@ const client = new Client({
 });
 
 const fs = require("fs");
+
+// ************************************************* //
 
 // LOAD EVENTS //
 const eventsPath = path.join(__dirname, "events");
@@ -58,6 +59,28 @@ for (const file of commandFiles) {
   } else {
     console.log(
       `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
+    );
+  }
+}
+
+// LOAD BUTTONS //
+
+client.buttons = new Collection();
+
+const buttonsPath = path.join(__dirname, "buttons");
+const buttonFiles = fs
+  .readdirSync(buttonsPath)
+  .filter((file) => file.endsWith(".js"));
+
+for (const file of buttonFiles) {
+  const filePath = path.join(buttonsPath, file);
+  const button = require(filePath);
+  // Set a new item in the Collection with the key as the command name and the value as the exported module
+  if ("customId" in button && "execute" in button) {
+    client.buttons.set(button.customId, button);
+  } else {
+    console.log(
+      `[WARNING] The button at ${filePath} is missing a required "customId" property.`
     );
   }
 }
