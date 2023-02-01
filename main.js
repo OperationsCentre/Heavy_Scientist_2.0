@@ -3,13 +3,15 @@
 require("dotenv").config();
 const debug = require("./debug");
 const path = require("path");
-const { token } = require("./config/config.json");
+const { token, guild_id, client_id } = require("./config/config.json");
 
 const {
   Client,
   GatewayIntentBits,
   Partials,
   Collection,
+  REST,
+  Routes,
 } = require("discord.js");
 
 const client = new Client({
@@ -57,11 +59,33 @@ for (const file of commandFiles) {
   if ("data" in command && "execute" in command) {
     client.commands.set(command.data.name, command);
   } else {
-    console.log(
+    debug.log(
       `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
     );
   }
 }
+
+const commands = [];
+
+// Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
+for (const file of commandFiles) {
+  const command = require(`./commands/${file}`);
+  commands.push(command.data.toJSON());
+}
+
+// Construct and prepare an instance of the REST module
+const rest = new REST({ version: "10" }).setToken(token);
+
+(async () => {
+  try {
+    await rest.put(Routes.applicationGuildCommands(client_id, guild_id), {
+      body: commands,
+    });
+    debug.log("Commands Successfully Registered Locally");
+  } catch (err) {
+    console.error(err);
+  }
+})();
 
 // LOAD BUTTONS //
 
@@ -79,7 +103,7 @@ for (const file of buttonFiles) {
   if ("customId" in button && "execute" in button) {
     client.buttons.set(button.customId, button);
   } else {
-    console.log(
+    debug.log(
       `[WARNING] The button at ${filePath} is missing a required "customId" property.`
     );
   }
