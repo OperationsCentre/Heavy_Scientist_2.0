@@ -1,5 +1,7 @@
 require("dotenv").config();
 const debug = require("./debug");
+const path = require("path");
+const { token, server_id } = require("./config/config.json");
 
 const {
   Client,
@@ -23,72 +25,41 @@ const client = new Client({
 
 const fs = require("fs");
 
-client.commands = new Collection();
-let commands = LoadCommands(fs, client);
+// LOAD EVENTS //
+const eventsPath = path.join(__dirname, "events");
+const eventFiles = fs
+  .readdirSync(eventsPath)
+  .filter((file) => file.endsWith(".js"));
 
-//Once the bot is online
-client.once(Events.ClientReady, async () => {
-  debug.log("Heavy Scientist: Online!");
-
-  const CLIENT_ID = client.user.id;
-
-  const rest = new REST({
-    version: "9",
-  }).setToken(process.env.TOKEN);
-
-  (async () => {
-    try {
-      if (process.env.ENV === "production") {
-        await rest.put(Routes.applicationCommands(CLIENT_ID), {
-          body: commands,
-        });
-        debug.log("Commands Registered Globally");
-      } else {
-        await rest.put(
-          Routes.applicationGuildCommands(CLIENT_ID, process.env.GUILD_ID),
-          {
-            body: commands,
-          }
-        );
-        debug.log("Commands Registered Locally");
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  })();
-});
-
-client.on(Events.InteractionCreate, async (interaction) => {
-  try {
-    if (interaction.isCommand()) {
-      const command = client.commands.get(interaction.commandName);
-
-      try {
-        await command.execute(interaction, client);
-      } catch (err) {
-        interaction.reply({
-          content:
-            "An error occurred using this command. Please contact an administrator.",
-          ephemeral: true,
-        });
-        console.error(err);
-      }
-    }
-  } catch (err) {}
-});
-
-function LoadCommands(fs, client) {
-  const commandFiles = fs
-    .readdirSync("./commands/")
-    .filter((file) => file.endsWith(".js"));
-
-  let commands = [];
-  for (const file of commandFiles) {
-    const command = require(`./commands/${file}`);
-    commands.push(command.data.toJSON());
-    client.commands.set(command.data.name, command);
+for (const file of eventFiles) {
+  const filePath = path.join(eventsPath, file);
+  const event = require(filePath);
+  if (event.once) {
+    client.once(event.name, (...args) => event.execute(...args));
+  } else {
+    client.on(event.name, (...args) => event.execute(...args));
   }
-  return commands;
 }
 
-client.login(process.env.TOKEN);
+// LOAD COMMANDS //
+client.commands = new Collection();
+
+const commandsPath = path.join(__dirname, "commands");
+const commandFiles = fs
+  .readdirSync(commandsPath)
+  .filter((file) => file.endsWith(".js"));
+
+for (const file of commandFiles) {
+  const filePath = path.join(commandsPath, file);
+  const command = require(filePath);
+  // Set a new item in the Collection with the key as the command name and the value as the exported module
+  if ("data" in command && "execute" in command) {
+    client.commands.set(command.data.name, command);
+  } else {
+    console.log(
+      `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
+    );
+  }
+}
+
+client.login(token);
