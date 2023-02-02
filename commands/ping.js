@@ -5,6 +5,8 @@ const {
   ButtonStyle,
 } = require("discord.js");
 
+const { testEmbed } = require("../embeds/testEmbed");
+
 module.exports = {
   data: new SlashCommandBuilder().setName("ping").setDescription("Pong"),
   async execute(interaction) {
@@ -17,6 +19,7 @@ module.exports = {
 
     interaction.reply({
       content: "Pong!",
+      embeds: [testEmbed],
       components: [buttons],
     });
   },
