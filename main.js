@@ -45,27 +45,14 @@ for (const file of eventFiles) {
 }
 
 // LOAD COMMANDS //
-client.commands = new Collection();
+client.commands = createCollection("commands");
 
+// REGISTER COMMANDS //
+const commands = [];
 const commandsPath = path.join(__dirname, "commands");
 const commandFiles = fs
   .readdirSync(commandsPath)
   .filter((file) => file.endsWith(".js"));
-
-for (const file of commandFiles) {
-  const filePath = path.join(commandsPath, file);
-  const command = require(filePath);
-  // Set a new item in the Collection with the key as the command name and the value as the exported module
-  if ("data" in command && "execute" in command) {
-    client.commands.set(command.data.name, command);
-  } else {
-    debug.log(
-      `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
-    );
-  }
-}
-
-const commands = [];
 
 // Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
 for (const file of commandFiles) {
@@ -88,25 +75,36 @@ const rest = new REST({ version: "10" }).setToken(token);
 })();
 
 // LOAD BUTTONS //
+client.buttons = createCollection("buttons");
 
-client.buttons = new Collection();
+function createCollection(folder) {
+  //Create new Collection
+  let collection = new Collection();
 
-const buttonsPath = path.join(__dirname, "buttons");
-const buttonFiles = fs
-  .readdirSync(buttonsPath)
-  .filter((file) => file.endsWith(".js"));
+  //Get commands path
+  const collectionsPath = path.join(__dirname, folder);
+  //Gets all files inside folder ending in .js
+  const collectionFile = fs
+    .readdirSync(collectionsPath)
+    .filter((file) => file.endsWith(".js"));
 
-for (const file of buttonFiles) {
-  const filePath = path.join(buttonsPath, file);
-  const button = require(filePath);
-  // Set a new item in the Collection with the key as the command name and the value as the exported module
-  if ("data" in button && "execute" in button) {
-    client.buttons.set(button.data.name, button);
-  } else {
-    debug.log(
-      `[WARNING] The button at ${filePath} is missing a required "data" property.`
-    );
+  //For all files
+  for (const file of collectionFile) {
+    //Get location of file
+    const filePath = path.join(collectionsPath, file);
+    //Load file
+    const item = require(filePath);
+    // Set a new item in the Collection with the key as the command name and the value as the exported module
+    if ("data" in item && "execute" in item) {
+      collection.set(item.data.name, item);
+    } else {
+      debug.log(
+        `[WARNING] The item at ${filePath} is missing a required "data" property.`
+      );
+    }
   }
+
+  return collection;
 }
 
 client.login(token);
