@@ -1,8 +1,8 @@
-const rust_colour = require("../config/config.json").colors.rust_colour;
+const { colours } = require("../config/config.json");
 module.exports = {
   testEmbed: {
     title: "Test Title",
     description: "Test Description.",
-    color: rust_colour,
+    color: colours.rust_colour,
   },
 };
