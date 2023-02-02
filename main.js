@@ -77,6 +77,7 @@ const rest = new REST({ version: "10" }).setToken(token);
 // LOAD BUTTONS //
 client.buttons = createCollection("buttons");
 
+// LOAD NEW COLLECTION OF .js FILES
 function createCollection(folder) {
   //Create new Collection
   let collection = new Collection();
