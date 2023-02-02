@@ -70,7 +70,7 @@ const rest = new REST({ version: "10" }).setToken(token);
     });
     debug.log("Commands Successfully Registered Locally");
   } catch (err) {
-    console.error(err);
+    debug.log(err);
   }
 })();
 
