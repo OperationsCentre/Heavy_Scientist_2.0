@@ -1,5 +1,5 @@
 module.exports = {
-  data: { name: "testbutton" },
+  data: { name: "button" },
   async execute(interaction) {
     interaction.reply("Button Pressed!");
   },
