@@ -1,11 +1,4 @@
-const {
-  SlashCommandBuilder,
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle,
-} = require("discord.js");
-
-const { testEmbed } = require("../embeds/testEmbed");
+const { SlashCommandBuilder } = require("discord.js");
 
 module.exports = {
   data: new SlashCommandBuilder().setName("ping").setDescription("Pong"),
