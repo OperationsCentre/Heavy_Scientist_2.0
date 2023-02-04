@@ -1,7 +1,14 @@
 const { colours } = require("../config/config.json");
 const moment = require("moment");
 module.exports = {
-  warn_user: function (member, roles, warnings) {
+  /**
+   *
+   * @param {GuildMember} member
+   * @param {string[]} roles
+   * @param {int} warnings
+   * @returns
+   */
+  info: function (member, roles, warnings) {
     return {
       color: colours.log_colour,
       author: {

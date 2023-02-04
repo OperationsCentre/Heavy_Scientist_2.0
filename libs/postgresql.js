@@ -1,5 +1,6 @@
 const pgDatabase = require("pg");
 const { username, ip, password } = require("../config/config.json").postgresql;
+
 const pgconnection = new pgDatabase.Client({
   user: username,
   host: ip,
@@ -8,6 +9,8 @@ const pgconnection = new pgDatabase.Client({
   port: 5432,
 });
 
+pgconnection.connect();
+
 module.exports = {
   /**
    * Returns result of query
@@ -15,10 +18,7 @@ module.exports = {
    * @returns result of query
    */
   query: async function (query) {
-    let response = null;
-    await pgconnection.query(query, async (err, res) => {
-      response = res;
-    });
+    let response = await pgconnection.query(query);
     return response;
   },
 };

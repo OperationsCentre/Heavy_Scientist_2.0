@@ -2,9 +2,9 @@ module.exports = {
   /**
    * Get member object from ID
    * @param {int} id
-   * @returns {GuildMember} member object
+   * @returns {Guild} member object
    */
-  getMemberFromId: function (id) {
-    return guild.members.fetch(id);
+  getMemberFromId: async function (id, guild) {
+    return await guild.members.fetch(id);
   },
 };
