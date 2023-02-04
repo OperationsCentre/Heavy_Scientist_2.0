@@ -1,4 +1,5 @@
 const { colours } = require("../config/config.json");
+const { na_role, eu_role, row_role } = require("../config/config.json").roles;
 const { rust_logo } = require("../config/config.json").images;
 module.exports = {
   location_roles: {
@@ -10,17 +11,17 @@ module.exports = {
     fields: [
       {
         name: ":one:",
-        value: "<@&1047157742831423549>",
+        value: `<@&${na_role}>`,
         inline: true,
       },
       {
         name: ":two:",
-        value: "<@&1047157818999963648>",
+        value: `<@&${eu_role}>`,
         inline: true,
       },
       {
         name: ":three:",
-        value: "<@&1047158446602063913>",
+        value: `<@&${row_role}>`,
         inline: true,
       },
     ],

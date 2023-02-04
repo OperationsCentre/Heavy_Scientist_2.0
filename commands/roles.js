@@ -32,7 +32,7 @@ module.exports = {
         .setStyle(ButtonStyle.Secondary)
         .setEmoji("1️⃣"),
       new ButtonBuilder()
-        .setCustomId("spartan-button")
+        .setCustomId("spartans-button")
         .setStyle(ButtonStyle.Secondary)
         .setEmoji("2️⃣"),
       new ButtonBuilder()

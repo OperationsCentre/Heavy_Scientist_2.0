@@ -1,4 +1,6 @@
 const { colours } = require("../config/config.json");
+const { medjay_role, spartans_role, immortals_role, centurion_role } =
+  require("../config/config.json").roles;
 const { rust_logo } = require("../config/config.json").images;
 module.exports = {
   cosmetic_roles: {
@@ -10,22 +12,22 @@ module.exports = {
     fields: [
       {
         name: ":one:",
-        value: "<@&786593800596357130>",
+        value: `<@&${medjay_role}>`,
         inline: true,
       },
       {
         name: ":two:",
-        value: "<@&1047156960769867916>",
+        value: `<@&${spartans_role}>`,
         inline: true,
       },
       {
         name: ":three:",
-        value: "<@&917405625712001085>",
+        value: `<@&${immortals_role}>`,
         inline: true,
       },
       {
         name: ":four:",
-        value: "<@&786591672770625548>",
+        value: `<@&${centurion_role}>`,
         inline: true,
       },
     ],
