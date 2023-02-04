@@ -1,10 +1,11 @@
 const { colours } = require("../config/config.json");
+const { rust_logo } = require("../config/config.json").images;
 module.exports = {
   location_roles: {
     title: "Locations Roles",
-    color: process.env.EMBED_COLOUR,
+    color: colours.rust_colour,
     thumbnail: {
-      url: "https://operationscentre.github.io/community/img/rust-logo.jpg",
+      url: rust_logo,
     },
     fields: [
       {

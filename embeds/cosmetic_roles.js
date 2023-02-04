@@ -1,10 +1,11 @@
 const { colours } = require("../config/config.json");
+const { rust_logo } = require("../config/config.json").images;
 module.exports = {
   cosmetic_roles: {
     title: "Cosmetic Roles",
     color: colours.rust_colour,
     thumbnail: {
-      url: "https://operationscentre.github.io/community/img/rust-logo.jpg",
+      url: rust_logo,
     },
     fields: [
       {
