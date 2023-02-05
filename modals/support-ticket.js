@@ -9,8 +9,7 @@ const {
   ButtonBuilder,
   ButtonStyle,
 } = require("discord.js");
-const { ticket_issue } = require("../embeds/ticket_issue");
-const roles = require("../libs/roles");
+
 module.exports = {
   data: { name: "support-ticket" },
   async execute(interaction) {
