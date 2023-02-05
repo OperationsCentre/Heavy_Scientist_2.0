@@ -13,6 +13,7 @@ const { rust_server } = require("../embeds/rust_server");
 const { rust_role } = require("../embeds/rust_role");
 const { cosmetic_roles } = require("../embeds/cosmetic_roles");
 const { location_roles } = require("../embeds/location_roles");
+const { support_ticket } = require("../embeds/support_ticket");
 const { rust_emoji } = require("../config/config.json").roles;
 
 async function sendRules(interaction) {
@@ -114,6 +115,20 @@ async function sendRust(interaction) {
   interaction.reply({ embeds: [rust_server] });
 }
 
+async function sendTicket(interaction) {
+  let createTicketButton = new ActionRowBuilder().addComponents(
+    new ButtonBuilder()
+      .setCustomId("create-ticket-button")
+      .setLabel("Create Support Ticket")
+      .setStyle(ButtonStyle.Primary)
+    //.setEmoji(rust_role)
+  );
+  interaction.reply({
+    embeds: [support_ticket],
+    components: [createTicketButton],
+  });
+}
+
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("embeds")
@@ -127,6 +142,9 @@ module.exports = {
     .addSubcommand((subcommand) =>
       subcommand.setName("rust").setDescription("Sends Rust Embed")
     )
+    .addSubcommand((subcommand) =>
+      subcommand.setName("ticket").setDescription("Sends Ticket Embed")
+    )
     .setDefaultMemberPermissions(PermissionsBitField.Flags.ManageChannels),
   async execute(interaction) {
     let option = interaction.options.getSubcommand();
@@ -134,5 +152,6 @@ module.exports = {
     if (option === "roles") sendRoles(interaction);
     else if (option === "rules") sendRules(interaction);
     else if (option === "rust") sendRust(interaction);
+    else if (option === "ticket") sendTicket(interaction);
   },
 };
