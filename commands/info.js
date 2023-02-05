@@ -2,7 +2,7 @@
 const { SlashCommandBuilder, PermissionsBitField } = require("discord.js");
 const { info } = require("../embeds/info");
 const { getMemberFromId } = require("../libs/getMemberFromId");
-const { query } = require("../libs/postgresql");
+const fs = require("fs");
 const { guild_id } = require("../config/config.json");
 // ************************************************************************* //
 
@@ -35,16 +35,13 @@ module.exports = {
       });
     else roles = "None";
 
-    // Sets query string
-    let queryString = `SELECT warnings FROM users WHERE user_id = ${targetUser.id};`;
-
-    // Queries database
-    let result = (await query(queryString)).rows[0];
+    let obj = JSON.parse(fs.readFileSync("./warnings/warnings.json", "utf8"));
+    console.log(obj);
 
     // Sets warnings to 0 by default
-    let warnings = 0;
-    // If result found in the database, set warnings to result
-    if (result) warnings = result.warnings;
+    let warnings = obj[targetUser.id];
+    if (!warnings) warnings = 0;
+    else warnings = obj[targetUser.id].warnings;
 
     // Send reply
     interaction.reply({

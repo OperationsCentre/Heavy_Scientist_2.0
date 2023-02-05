@@ -1,15 +1,10 @@
 const { colours } = require("../config/config.json");
 module.exports = {
-  warn_user: function (targetUser, user) {
+  warn_user: function (targetUser, user, warnings, reason) {
+    let monospace = "`";
     return {
-      title: "Member has been warned",
-      description:
-        targetUser.username +
-        "#" +
-        targetUser.discriminator +
-        " has been warned.\nThey now have " +
-        (numberOfWarnings + 1) +
-        " warning(s).",
+      title: `${targetUser.tag} has been warned`,
+      description: `<@${targetUser.id}> has been warned for the following reason:\n${monospace}${reason}${monospace}\n\nThey now have ${warnings} warning(s)`,
       color: colours.log_colour,
       author: {
         name: user.username + "#" + user.discriminator,
