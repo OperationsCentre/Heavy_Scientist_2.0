@@ -10,6 +10,9 @@ const {
   ButtonStyle,
 } = require("discord.js");
 
+const { logger } = require("../webhooks/logger");
+const { ticket_issue } = require("../embeds/ticket_issue");
+
 module.exports = {
   data: { name: "support-ticket" },
   async execute(interaction) {
@@ -57,6 +60,8 @@ module.exports = {
       content: msg + "```" + issue + "```",
       components: [closeTicketButton],
     });
+
+    logger.send({ embeds: [ticket_issue(interaction.member, issue)] });
 
     interaction.reply({
       content: `Thank you for contacting support!\nWe have created you a ticket: ${channel.toString()}`,

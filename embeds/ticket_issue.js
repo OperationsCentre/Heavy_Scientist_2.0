@@ -2,7 +2,7 @@ const { colours } = require("../config/config.json");
 module.exports = {
   ticket_issue: function (member, issue) {
     let embed = {
-      title: "Ticket Information",
+      title: "Ticket Created",
       description: issue,
       color: colours.rust_colour,
       author: {
