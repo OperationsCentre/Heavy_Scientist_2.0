@@ -1,5 +1,6 @@
 const { ticket_closed } = require("../embeds/ticket_closed");
 const { logger } = require("../webhooks/logger");
+const debug = require("../debug");
 const fs = require("fs");
 module.exports = {
   data: { name: "close-ticket-button" },
@@ -31,6 +32,8 @@ module.exports = {
     await logger.send({
       embeds: [ticket_closed(interaction.member, ticketFile)],
     });
+
+    debug.log(`Ticket Closed by ${interaction.member.user.tag}`);
 
     interaction.channel.delete();
   },
