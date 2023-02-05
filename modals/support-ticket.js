@@ -49,7 +49,6 @@ module.exports = {
         .setCustomId("close-ticket-button")
         .setLabel("Close Ticket")
         .setStyle(ButtonStyle.Primary)
-      //.setEmoji(rust_role)
     );
 
     let msg = `Hello, ${interaction.member.user.toString()}. Thank you for contacting support. <@&${rust_staff_role}> have been contacted.\n`;

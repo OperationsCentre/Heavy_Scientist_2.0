@@ -121,7 +121,6 @@ async function sendTicket(interaction) {
       .setCustomId("create-ticket-button")
       .setLabel("Create Support Ticket")
       .setStyle(ButtonStyle.Primary)
-    //.setEmoji(rust_role)
   );
   interaction.reply({
     embeds: [support_ticket],
