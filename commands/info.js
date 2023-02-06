@@ -36,7 +36,6 @@ module.exports = {
     else roles = "None";
 
     let obj = JSON.parse(fs.readFileSync("./warnings/warnings.json", "utf8"));
-    console.log(obj);
 
     // Sets warnings to 0 by default
     let warnings = obj[targetUser.id];
