@@ -14,7 +14,7 @@ const { rust_role } = require("../embeds/rust_role");
 const { cosmetic_roles } = require("../embeds/cosmetic_roles");
 const { location_roles } = require("../embeds/location_roles");
 const { support_ticket } = require("../embeds/support_ticket");
-const { rust_emoji } = require("../config/config.json").roles;
+const { rust_emoji } = require("../config/config.json").emojis;
 
 async function sendRules(interaction) {
   const row = new ActionRowBuilder().addComponents(
@@ -98,7 +98,7 @@ async function sendRoles(interaction) {
       .setCustomId("rust-button")
       .setLabel("Rusty Operations")
       .setStyle(ButtonStyle.Secondary)
-    //.setEmoji(rust_role)
+      .setEmoji(rust_emoji)
   );
 
   message = await message.reply({
@@ -116,16 +116,22 @@ async function sendRust(interaction) {
 }
 
 async function sendTicket(interaction) {
+  const attachment1 = new AttachmentBuilder("./img/TicketsTop.png");
+  const attachment2 = new AttachmentBuilder("./img/TicketsBottom.gif");
+
   let createTicketButton = new ActionRowBuilder().addComponents(
     new ButtonBuilder()
       .setCustomId("create-ticket-button")
       .setLabel("Create Support Ticket")
       .setStyle(ButtonStyle.Primary)
   );
-  interaction.reply({
+  await interaction.reply({
+    files: [attachment1],
     embeds: [support_ticket],
     components: [createTicketButton],
   });
+
+  interaction.followUp({ files: [attachment2] });
 }
 
 module.exports = {
