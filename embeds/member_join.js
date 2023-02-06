@@ -7,7 +7,7 @@ module.exports = {
       description: `<@${
         member.user.id
       }> has joined the server.\nAccount was created on: ${moment
-        .utc(member.createdAt)
+        .utc(member.user.createdAt)
         .format("DD/MM/YYYY")}.`,
       color: colours.log_colour,
       author: {
