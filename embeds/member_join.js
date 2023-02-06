@@ -1,4 +1,5 @@
 const { colours } = require("../config/config.json");
+const moment = require("moment");
 module.exports = {
   member_join: function (member) {
     return {
@@ -10,7 +11,7 @@ module.exports = {
         .format("DD/MM/YYYY")}.`,
       color: colours.log_colour,
       author: {
-        name: member.user.username + "#" + user.discriminator,
+        name: member.user.username + "#" + member.user.discriminator,
         url: member.user.displayAvatarURL(),
         icon_url: member.user.displayAvatarURL(),
       },
