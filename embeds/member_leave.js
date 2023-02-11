@@ -3,7 +3,7 @@ module.exports = {
   member_leave: function (member) {
     return {
       title: `${member.user.tag} left`,
-      description: `<@${member.user.id}> has joined the server.`,
+      description: `<@${member.user.id}> has left the server.`,
       color: colours.log_colour,
       author: {
         name: member.user.username + "#" + member.user.discriminator,
