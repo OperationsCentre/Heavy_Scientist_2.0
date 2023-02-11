@@ -26,7 +26,7 @@ async function status() {
     client.user.setPresence({
       activities: [{ name: status_list[currentStatus] }],
     });
-    debug.log(`Status set to: ${status_list[currentStatus]}`);
+    //debug.log(`Status set to: ${status_list[currentStatus]}`);
   }
 
   setTimeout(status, 60000);
