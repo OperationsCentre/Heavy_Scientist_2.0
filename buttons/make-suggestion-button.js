@@ -1,9 +1,3 @@
-const {
-  ActionRowBuilder,
-  StringSelectMenuBuilder,
-  StringSelectMenuOptionBuilder,
-} = require("discord.js");
-
 module.exports = {
   data: { name: "make-suggestion-button" },
   async execute(interaction) {
