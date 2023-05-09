@@ -47,6 +47,22 @@ module.exports = {
         console.error(`Error executing ${interaction.customId}`);
         console.error(error);
       }
+    } else if (interaction.isSelectMenu()) {
+      const select_menu = interaction.client.select_menu.get(
+        interaction.customId
+      );
+
+      if (!select_menu) {
+        console.error(`No modal matching ${interaction.customId} was found.`);
+        return;
+      }
+
+      try {
+        await select_menu.execute(interaction);
+      } catch (error) {
+        console.error(`Error executing ${interaction.customId}`);
+        console.error(error);
+      }
     }
   },
 };
