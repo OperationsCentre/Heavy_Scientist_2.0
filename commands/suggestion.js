@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, PermissionsBitField } = require("discord.js");
 const fs = require("fs");
+const { logger } = require("../webhooks/logger");
 
 const suggestions_channel = require("../config/config.json").channels
   .suggestions_channel;
@@ -57,6 +58,10 @@ async function approveSuggestion(
       .get(suggestions_channel)
       .send({ embeds: [suggestionsJson.suggestions[suggestionIndex].embed] });
 
+    logger.send({
+      embeds: [suggestionsJson.suggestions[suggestionIndex].embed],
+    });
+
     suggestionsJson.suggestions[suggestionIndex].messageId = message.id;
 
     interaction.reply({
@@ -111,6 +116,10 @@ async function rejectSuggestion(interaction, suggestionsJson, suggestionIndex) {
         });
       });
 
+    logger.send({
+      embeds: [suggestionsJson.suggestions[suggestionIndex].embed],
+    });
+
     interaction.client.channels.cache
       .get(suggestions_channel)
       .messages.fetch(suggestionsJson.suggestions[suggestionIndex].messageId)
@@ -148,7 +157,10 @@ async function implementedSuggestion(
       ephemeral: true,
     });
     return;
-  } else if (suggestionsJson.suggestions[suggestionIndex].status == 1) {
+  } else if (
+    suggestionsJson.suggestions[suggestionIndex].status == 1 ||
+    suggestionsJson.suggestions[suggestionIndex].status == 0
+  ) {
     suggestionsJson.suggestions[suggestionIndex].status = 2;
 
     interaction.client.channels.cache
@@ -178,6 +190,10 @@ async function implementedSuggestion(
     let message = await interaction.client.channels.cache
       .get(suggestions_implemented_channel)
       .send({ embeds: [suggestionsJson.suggestions[suggestionIndex].embed] });
+
+    logger.send({
+      embeds: [suggestionsJson.suggestions[suggestionIndex].embed],
+    });
 
     suggestionsJson.suggestions[suggestionIndex].messageId = message.id;
 
