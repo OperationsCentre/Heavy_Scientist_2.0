@@ -77,7 +77,11 @@ const rest = new REST({ version: "10" }).setToken(token);
 // LOAD BUTTONS //
 client.buttons = createCollection("buttons");
 
+// LOAD MODALS //
 client.modals = createCollection("modals");
+
+// LOAD SELECT MENUS  //
+client.select_menu = createCollection("select_menu");
 
 // LOAD NEW COLLECTION OF .js FILES
 function createCollection(folder) {
