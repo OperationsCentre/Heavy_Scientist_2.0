@@ -14,6 +14,7 @@ const { rust_role } = require("../embeds/rust_role");
 const { cosmetic_roles } = require("../embeds/cosmetic_roles");
 const { location_roles } = require("../embeds/location_roles");
 const { support_ticket } = require("../embeds/support_ticket");
+const { make_suggestion } = require("../embeds/make_suggestion");
 const { rust_emoji } = require("../config/config.json").emojis;
 
 async function sendRules(interaction) {
@@ -134,6 +135,25 @@ async function sendTicket(interaction) {
   interaction.followUp({ files: [attachment2] });
 }
 
+async function sendSuggestion(interaction) {
+  //const attachment1 = new AttachmentBuilder("./img/TicketsTop.png");
+  //const attachment2 = new AttachmentBuilder("./img/TicketsBottom.gif");
+
+  let makeSuggestionButton = new ActionRowBuilder().addComponents(
+    new ButtonBuilder()
+      .setCustomId("make-suggestion-button")
+      .setLabel("Make a Suggestion")
+      .setStyle(ButtonStyle.Primary)
+  );
+  await interaction.reply({
+    //  files: [attachment1],
+    embeds: [support_ticket],
+    components: [makeSuggestionButton],
+  });
+
+  //interaction.followUp({ files: [attachment2] });
+}
+
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("embeds")
@@ -150,6 +170,9 @@ module.exports = {
     .addSubcommand((subcommand) =>
       subcommand.setName("ticket").setDescription("Sends Ticket Embed")
     )
+    .addSubcommand((subcommand) =>
+      subcommand.setName("suggestion").setDescription("Sends Ticket Embed")
+    )
     .setDefaultMemberPermissions(PermissionsBitField.Flags.ManageChannels),
   async execute(interaction) {
     let option = interaction.options.getSubcommand();
@@ -158,5 +181,6 @@ module.exports = {
     else if (option === "rules") sendRules(interaction);
     else if (option === "rust") sendRust(interaction);
     else if (option === "ticket") sendTicket(interaction);
+    else if (option === "suggestion") sendSuggestion(interaction);
   },
 };
