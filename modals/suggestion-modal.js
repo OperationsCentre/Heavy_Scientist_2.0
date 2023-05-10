@@ -2,7 +2,6 @@ const debug = require("../debug");
 
 const fs = require("fs");
 
-const { suggestionWebhook } = require("../webhooks/suggestion");
 const { suggestion_embed } = require("../embeds/suggestion_embed");
 const { logger } = require("../webhooks/logger");
 const suggestions_channel = require("../config/config.json").channels
@@ -31,9 +30,11 @@ module.exports = {
 
     embed.timestamp = dateCreated;
 
-    suggestionWebhook.send({
-      embeds: [embed],
-    });
+    let message = await interaction.client.channels.cache
+      .get(suggestions_channel)
+      .send({
+        embeds: [embed],
+      });
 
     logger.send({ embeds: [embed] });
 
@@ -43,6 +44,8 @@ module.exports = {
       suggestion: suggestion,
       embed: embed,
       createdTimestamp: dateCreated,
+      status: 0,
+      messageId: message.id,
     };
 
     suggestionsJson.metadata.number_of_suggestions++;
