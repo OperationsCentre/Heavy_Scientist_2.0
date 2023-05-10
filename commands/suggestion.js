@@ -4,6 +4,9 @@ const fs = require("fs");
 const suggestions_channel = require("../config/config.json").channels
   .suggestions_channel;
 
+const suggestions_implemented_channel = require("../config/config.json")
+  .channels.suggestions_implemented_channel;
+
 async function approveSuggestion(
   interaction,
   suggestionsJson,
@@ -27,7 +30,6 @@ async function approveSuggestion(
     return;
   } else if (suggestionsJson.suggestions[suggestionIndex].status == 0) {
     suggestionsJson.suggestions[suggestionIndex].status = 1;
-    interaction.options.getString("response");
 
     interaction.client.channels.cache
       .get(suggestions_channel)
@@ -44,6 +46,12 @@ async function approveSuggestion(
     ].embed.description = `${interaction.member.user.toString()} has approved <@${
       suggestionsJson.suggestions[suggestionIndex].user.id
     }> suggestion.`;
+
+    let dateApproved = new Date().toISOString();
+
+    suggestionsJson.suggestions[suggestionIndex].embed.timestamp = dateApproved;
+
+    suggestionsJson.suggestions[suggestionIndex].dateApproved = dateApproved;
 
     let message = await interaction.client.channels.cache
       .get(suggestions_channel)
@@ -88,6 +96,12 @@ async function rejectSuggestion(interaction, suggestionsJson, suggestionIndex) {
       value: "```" + interaction.options.getString("reason") + "```",
     });
 
+    let dateRejected = new Date().toISOString();
+
+    suggestionsJson.suggestions[suggestionIndex].embed.timestamp = dateRejected;
+
+    suggestionsJson.suggestions[suggestionIndex].dateRejected = dateRejected;
+
     interaction.client.users
       .fetch(suggestionsJson.suggestions[suggestionIndex].user.id)
       .then((user) => {
@@ -110,13 +124,71 @@ async function rejectSuggestion(interaction, suggestionsJson, suggestionIndex) {
   });
 }
 
-function implementedSuggestion(interaction, suggestionIndex) {
-  interaction.reply({
-    content:
-      suggestionsJson.suggestions[suggestionIndex].id +
-      " has been implemented.",
-    ephemeral: true,
-  });
+async function implementedSuggestion(
+  interaction,
+  suggestionsJson,
+  suggestionIndex
+) {
+  if (!suggestionsJson.suggestions[suggestionIndex]) {
+    interaction.reply({
+      content: "No suggestion with the id provided exists.",
+      ephemeral: true,
+    });
+    return;
+  }
+
+  if (
+    suggestionsJson.suggestions[suggestionIndex].status == -1 ||
+    suggestionsJson.suggestions[suggestionIndex].status == 2
+  ) {
+    interaction.reply({
+      content:
+        suggestionsJson.suggestions[suggestionIndex].id +
+        " cannot be implemented as it has been rejected or implemented.",
+      ephemeral: true,
+    });
+    return;
+  } else if (suggestionsJson.suggestions[suggestionIndex].status == 1) {
+    suggestionsJson.suggestions[suggestionIndex].status = 2;
+
+    interaction.client.channels.cache
+      .get(suggestions_channel)
+      .messages.fetch(suggestionsJson.suggestions[suggestionIndex].messageId)
+      .then((msg) => msg.delete());
+
+    suggestionsJson.suggestions[suggestionIndex].embed.fields.push({
+      name: "Implemented:",
+      value: "```" + interaction.options.getString("reason") + "```",
+    });
+
+    suggestionsJson.suggestions[
+      suggestionIndex
+    ].embed.description = `${interaction.member.user.toString()} has implemented <@${
+      suggestionsJson.suggestions[suggestionIndex].user.id
+    }> suggestion.`;
+
+    let dateImplemented = new Date().toISOString();
+
+    suggestionsJson.suggestions[suggestionIndex].embed.timestemp =
+      dateImplemented;
+
+    suggestionsJson.suggestions[suggestionIndex].dateImplemented =
+      dateImplemented;
+
+    let message = await interaction.client.channels.cache
+      .get(suggestions_implemented_channel)
+      .send({ embeds: [suggestionsJson.suggestions[suggestionIndex].embed] });
+
+    suggestionsJson.suggestions[suggestionIndex].messageId = message.id;
+
+    interaction.reply({
+      content:
+        suggestionsJson.suggestions[suggestionIndex].id +
+        " has been implemented.",
+      ephemeral: true,
+    });
+    return;
+  }
 }
 
 module.exports = {
@@ -153,7 +225,7 @@ module.exports = {
         .addStringOption((option) =>
           option
             .setName("reason")
-            .setDescription("The reason you approved the suggestion")
+            .setDescription("The reason you rejected the suggestion")
             .setRequired(true)
         )
     )
@@ -165,6 +237,12 @@ module.exports = {
           option
             .setName("id")
             .setDescription("The ID of the suggestion")
+            .setRequired(true)
+        )
+        .addStringOption((option) =>
+          option
+            .setName("reason")
+            .setDescription("The reason you implemented the suggestion")
             .setRequired(true)
         )
     )
