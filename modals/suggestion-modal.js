@@ -23,8 +23,6 @@ module.exports = {
     let embed = suggestion_embed(
       interaction.member,
       suggestion,
-      null,
-      null,
       suggestionsJson.metadata.number_of_suggestions
     );
 
