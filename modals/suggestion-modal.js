@@ -61,7 +61,7 @@ module.exports = {
     );
 
     interaction.reply({
-      content: `Thank you for your suggestion! You can view your suggestion in <#${suggestions_channel}>}`,
+      content: `Thank you for your suggestion! You can view your suggestion in <#${suggestions_channel}>`,
       ephemeral: true,
     });
   },
