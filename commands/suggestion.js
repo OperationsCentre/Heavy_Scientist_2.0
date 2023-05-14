@@ -15,11 +15,21 @@ const {
 } = require("../libs/messageManagement");
 const { interactionReply } = require("../libs/interactionReply");
 
+// 0 = pending, 1 = approved, 2 = rejected, 3 = implemented
+
+/**
+ *
+ * @param {Interaction} interaction
+ * @param {Object} suggestionsJson
+ * @param {Integer} suggestionIndex
+ * @returns void
+ */
 async function approveSuggestion(
   interaction,
   suggestionsJson,
   suggestionIndex
 ) {
+  // Check if suggestion is pending. If suggestion is pending, approve it. If not, send error message.
   if (suggestionsJson.suggestions[suggestionIndex].status != 0) {
     replyInteraction(
       interaction,
@@ -37,11 +47,13 @@ async function approveSuggestion(
       suggestionsJson.suggestions[suggestionIndex].messageId
     );
 
+    // Add response to embed
     suggestionsJson.suggestions[suggestionIndex].embed.fields.push({
       name: "Response:",
       value: "```" + interaction.options.getString("reason") + "```",
     });
 
+    // Add response to embed description to show who approved the suggestion
     suggestionsJson.suggestions[
       suggestionIndex
     ].embed.description = `${interaction.member.user.toString()} has approved <@${
@@ -54,6 +66,7 @@ async function approveSuggestion(
 
     suggestionsJson.suggestions[suggestionIndex].dateApproved = dateApproved;
 
+    // Send message to suggestions channel
     let message = await sendMessage(interaction.client, suggestions_channel, {
       embeds: [suggestionsJson.suggestions[suggestionIndex].embed],
     });
@@ -72,8 +85,9 @@ async function approveSuggestion(
     return;
   }
 }
-
+// Reject suggestion
 async function rejectSuggestion(interaction, suggestionsJson, suggestionIndex) {
+  // Check if suggestion is pending. If suggestion is pending, reject it. If not, send error message.
   if (suggestionsJson.suggestions[suggestionIndex].status != 0) {
     interactionReply(
       interaction,
@@ -82,12 +96,15 @@ async function rejectSuggestion(interaction, suggestionsJson, suggestionIndex) {
     );
     return;
   } else if (suggestionsJson.suggestions[suggestionIndex].status == 0) {
+    // Set status to rejected
     suggestionsJson.suggestions[suggestionIndex].status = -1;
 
+    // Set embed description to rejected
     suggestionsJson.suggestions[
       suggestionIndex
     ].embed.description = `${interaction.member.user.toString()} has rejected your suggestion.`;
 
+    // Add response to embed
     suggestionsJson.suggestions[suggestionIndex].embed.fields.push({
       name: "Response:",
       value: "```" + interaction.options.getString("reason") + "```",
@@ -99,6 +116,7 @@ async function rejectSuggestion(interaction, suggestionsJson, suggestionIndex) {
 
     suggestionsJson.suggestions[suggestionIndex].dateRejected = dateRejected;
 
+    // Send message to user to notify them that their suggestion has been rejected.
     dmUser(
       interaction.client,
       suggestionsJson.suggestions[suggestionIndex].user.id,
@@ -126,11 +144,13 @@ async function rejectSuggestion(interaction, suggestionsJson, suggestionIndex) {
   );
 }
 
+// Implement suggestion
 async function implementedSuggestion(
   interaction,
   suggestionsJson,
   suggestionIndex
 ) {
+  // Check if suggestion is pending or approved. If suggestion is pending or approved, implement it. If not, send error message.
   if (
     suggestionsJson.suggestions[suggestionIndex].status == -1 ||
     suggestionsJson.suggestions[suggestionIndex].status == 2
@@ -145,6 +165,7 @@ async function implementedSuggestion(
     suggestionsJson.suggestions[suggestionIndex].status == 1 ||
     suggestionsJson.suggestions[suggestionIndex].status == 0
   ) {
+    // Set status to implemented
     suggestionsJson.suggestions[suggestionIndex].status = 2;
 
     deleteMessage(
@@ -153,11 +174,13 @@ async function implementedSuggestion(
       suggestionsJson.suggestions[suggestionIndex].messageId
     );
 
+    // Add implemented reason to embed
     suggestionsJson.suggestions[suggestionIndex].embed.fields.push({
       name: "Implemented:",
       value: "```" + interaction.options.getString("reason") + "```",
     });
 
+    // Modify embed description to show who implemented the suggestion
     suggestionsJson.suggestions[
       suggestionIndex
     ].embed.description = `${interaction.member.user.toString()} has implemented <@${
@@ -172,6 +195,7 @@ async function implementedSuggestion(
     suggestionsJson.suggestions[suggestionIndex].dateImplemented =
       dateImplemented;
 
+    // Send embed to suggestions-implemented channel
     let message = await sendMessage(
       interaction.client,
       suggestions_implemented_channel,
