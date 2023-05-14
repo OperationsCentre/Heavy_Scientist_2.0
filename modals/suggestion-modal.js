@@ -4,6 +4,7 @@ const fs = require("fs");
 
 const { suggestion_embed } = require("../embeds/suggestion_embed");
 const { logger } = require("../webhooks/logger");
+const { sendMessage } = require("../libs/messageManagement");
 const suggestions_channel = require("../config/config.json").channels
   .suggestions_channel;
 
@@ -28,11 +29,9 @@ module.exports = {
 
     embed.timestamp = dateCreated;
 
-    let message = await interaction.client.channels.cache
-      .get(suggestions_channel)
-      .send({
-        embeds: [embed],
-      });
+    let message = sendMessage(interaction.client, suggestions_channel, {
+      embeds: [embed],
+    });
 
     logger.send({ embeds: [embed] });
 
@@ -50,13 +49,15 @@ module.exports = {
 
     suggestionsJson.suggestions.push(suggestionObject);
 
-    fs.writeFile(
-      "./suggestions/suggestions.json",
-      JSON.stringify(suggestionsJson),
-      function (err) {
-        if (err) throw err;
-      }
-    );
+    if (suggestionsJson.suggestions.length != 0) {
+      fs.writeFile(
+        "./suggestions/suggestions.json",
+        JSON.stringify(suggestionsJson),
+        function (err) {
+          if (err) throw err;
+        }
+      );
+    }
 
     interaction.reply({
       content: `Thank you for your suggestion! You can view your suggestion in <#${suggestions_channel}>`,
