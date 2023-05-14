@@ -8,34 +8,34 @@ const suggestions_channel = require("../config/config.json").channels
 const suggestions_implemented_channel = require("../config/config.json")
   .channels.suggestions_implemented_channel;
 
+const {
+  sendMessage,
+  deleteMessage,
+  dmUser,
+} = require("../libs/messageManagement");
+const { interactionReply } = require("../libs/interactionReply");
+
 async function approveSuggestion(
   interaction,
   suggestionsJson,
   suggestionIndex
 ) {
-  if (!suggestionsJson.suggestions[suggestionIndex]) {
-    interaction.reply({
-      content: "No suggestion with the id provided exists.",
-      ephemeral: true,
-    });
-    return;
-  }
-
   if (suggestionsJson.suggestions[suggestionIndex].status != 0) {
-    interaction.reply({
-      content:
-        suggestionsJson.suggestions[suggestionIndex].id +
+    replyInteraction(
+      interaction,
+      suggestionsJson.suggestions[suggestionIndex].id +
         " cannot be approved as it has already been approved/rejected/implemented.",
-      ephemeral: true,
-    });
+      true
+    );
     return;
   } else if (suggestionsJson.suggestions[suggestionIndex].status == 0) {
     suggestionsJson.suggestions[suggestionIndex].status = 1;
 
-    interaction.client.channels.cache
-      .get(suggestions_channel)
-      .messages.fetch(suggestionsJson.suggestions[suggestionIndex].messageId)
-      .then((msg) => msg.delete());
+    await deleteMessage(
+      interaction.client,
+      suggestions_channel,
+      suggestionsJson.suggestions[suggestionIndex].messageId
+    );
 
     suggestionsJson.suggestions[suggestionIndex].embed.fields.push({
       name: "Response:",
@@ -54,9 +54,9 @@ async function approveSuggestion(
 
     suggestionsJson.suggestions[suggestionIndex].dateApproved = dateApproved;
 
-    let message = await interaction.client.channels.cache
-      .get(suggestions_channel)
-      .send({ embeds: [suggestionsJson.suggestions[suggestionIndex].embed] });
+    let message = await sendMessage(interaction.client, suggestions_channel, {
+      embeds: [suggestionsJson.suggestions[suggestionIndex].embed],
+    });
 
     logger.send({
       embeds: [suggestionsJson.suggestions[suggestionIndex].embed],
@@ -64,30 +64,22 @@ async function approveSuggestion(
 
     suggestionsJson.suggestions[suggestionIndex].messageId = message.id;
 
-    interaction.reply({
-      content:
-        suggestionsJson.suggestions[suggestionIndex].id + " has been approved!",
-      ephemeral: true,
-    });
+    interactionReply(
+      interaction,
+      `Suggestion ${suggestionsJson.suggestions[suggestionIndex].id} has been approved!`,
+      true
+    );
     return;
   }
 }
 
 async function rejectSuggestion(interaction, suggestionsJson, suggestionIndex) {
-  if (!suggestionsJson.suggestions[suggestionIndex]) {
-    interaction.reply({
-      content: "No suggestion with the id provided exists.",
-      ephemeral: true,
-    });
-    return;
-  }
   if (suggestionsJson.suggestions[suggestionIndex].status != 0) {
-    interaction.reply({
-      content:
-        suggestionsJson.suggestions[suggestionIndex].id +
-        " cannot be rejected as it has already been approved/rejected/implemented.",
-      ephemeral: true,
-    });
+    interactionReply(
+      interaction,
+      `Suggestion ${suggestionsJson.suggestions[suggestionIndex].id} cannot be rejected as it has already been approved/rejected/implemented.`,
+      true
+    );
     return;
   } else if (suggestionsJson.suggestions[suggestionIndex].status == 0) {
     suggestionsJson.suggestions[suggestionIndex].status = -1;
@@ -107,30 +99,31 @@ async function rejectSuggestion(interaction, suggestionsJson, suggestionIndex) {
 
     suggestionsJson.suggestions[suggestionIndex].dateRejected = dateRejected;
 
-    interaction.client.users
-      .fetch(suggestionsJson.suggestions[suggestionIndex].user.id)
-      .then((user) => {
-        user.send({
-          content: `Your suggestion has been rejected.`,
-          embeds: [suggestionsJson.suggestions[suggestionIndex].embed],
-        });
-      });
+    dmUser(
+      interaction.client,
+      suggestionsJson.suggestions[suggestionIndex].user.id,
+      {
+        content: `Your suggestion has been rejected.`,
+        embeds: [suggestionsJson.suggestions[suggestionIndex].embed],
+      }
+    );
 
     logger.send({
       embeds: [suggestionsJson.suggestions[suggestionIndex].embed],
     });
 
-    interaction.client.channels.cache
-      .get(suggestions_channel)
-      .messages.fetch(suggestionsJson.suggestions[suggestionIndex].messageId)
-      .then((msg) => msg.delete());
+    deleteMessage(
+      interaction.client,
+      suggestions_channel,
+      suggestionsJson.suggestions[suggestionIndex].messageId
+    );
   }
 
-  interaction.reply({
-    content:
-      suggestionsJson.suggestions[suggestionIndex].id + " has been rejected.",
-    ephemeral: true,
-  });
+  interactionReply(
+    interaction,
+    `Suggestion ${suggestionsJson.suggestions[suggestionIndex].id} has been rejected.`,
+    true
+  );
 }
 
 async function implementedSuggestion(
@@ -138,24 +131,15 @@ async function implementedSuggestion(
   suggestionsJson,
   suggestionIndex
 ) {
-  if (!suggestionsJson.suggestions[suggestionIndex]) {
-    interaction.reply({
-      content: "No suggestion with the id provided exists.",
-      ephemeral: true,
-    });
-    return;
-  }
-
   if (
     suggestionsJson.suggestions[suggestionIndex].status == -1 ||
     suggestionsJson.suggestions[suggestionIndex].status == 2
   ) {
-    interaction.reply({
-      content:
-        suggestionsJson.suggestions[suggestionIndex].id +
-        " cannot be implemented as it has been rejected or implemented.",
-      ephemeral: true,
-    });
+    interactionReply(
+      interaction,
+      `Suggestion ${suggestionsJson.suggestions[suggestionIndex].id} cannot be rejected as it has already been rejected/implemented.`,
+      true
+    );
     return;
   } else if (
     suggestionsJson.suggestions[suggestionIndex].status == 1 ||
@@ -163,10 +147,11 @@ async function implementedSuggestion(
   ) {
     suggestionsJson.suggestions[suggestionIndex].status = 2;
 
-    interaction.client.channels.cache
-      .get(suggestions_channel)
-      .messages.fetch(suggestionsJson.suggestions[suggestionIndex].messageId)
-      .then((msg) => msg.delete());
+    deleteMessage(
+      interaction.client,
+      suggestions_channel,
+      suggestionsJson.suggestions[suggestionIndex].messageId
+    );
 
     suggestionsJson.suggestions[suggestionIndex].embed.fields.push({
       name: "Implemented:",
@@ -181,15 +166,17 @@ async function implementedSuggestion(
 
     let dateImplemented = new Date().toISOString();
 
-    suggestionsJson.suggestions[suggestionIndex].embed.timestemp =
+    suggestionsJson.suggestions[suggestionIndex].embed.timestamp =
       dateImplemented;
 
     suggestionsJson.suggestions[suggestionIndex].dateImplemented =
       dateImplemented;
 
-    let message = await interaction.client.channels.cache
-      .get(suggestions_implemented_channel)
-      .send({ embeds: [suggestionsJson.suggestions[suggestionIndex].embed] });
+    let message = await sendMessage(
+      interaction.client,
+      suggestions_implemented_channel,
+      { embeds: [suggestionsJson.suggestions[suggestionIndex].embed] }
+    );
 
     logger.send({
       embeds: [suggestionsJson.suggestions[suggestionIndex].embed],
@@ -197,12 +184,11 @@ async function implementedSuggestion(
 
     suggestionsJson.suggestions[suggestionIndex].messageId = message.id;
 
-    interaction.reply({
-      content:
-        suggestionsJson.suggestions[suggestionIndex].id +
-        " has been implemented.",
-      ephemeral: true,
-    });
+    interactionReply(
+      interaction,
+      `Suggestion ${suggestionsJson.suggestions[suggestionIndex].id} has been implemented.`,
+      true
+    );
     return;
   }
 }
@@ -274,6 +260,15 @@ module.exports = {
       (item) => item.id == interaction.options.getInteger("id")
     );
 
+    if (!suggestionsJson.suggestions[suggestionIndex]) {
+      interactionReply(
+        interaction,
+        "No suggestion with the id provided exists.",
+        true
+      );
+      return;
+    }
+
     if (option === "approve")
       await approveSuggestion(interaction, suggestionsJson, suggestionIndex);
     else if (option === "reject")
@@ -285,13 +280,15 @@ module.exports = {
         suggestionIndex
       );
 
-    fs.writeFile(
-      "./suggestions/suggestions.json",
-      JSON.stringify(suggestionsJson),
-      function (err) {
-        if (err) throw err;
-      }
-    );
+    if (suggestionsJson.suggestions.length != 0) {
+      fs.writeFile(
+        "./suggestions/suggestions.json",
+        JSON.stringify(suggestionsJson),
+        function (err) {
+          if (err) throw err;
+        }
+      );
+    }
 
     return;
   },
