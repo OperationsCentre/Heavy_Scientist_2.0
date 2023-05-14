@@ -304,6 +304,7 @@ module.exports = {
         suggestionIndex
       );
 
+    // Write to suggestions.json if there are any suggestions left to stop the file from being empty.
     if (suggestionsJson.suggestions.length != 0) {
       fs.writeFile(
         "./suggestions/suggestions.json",
