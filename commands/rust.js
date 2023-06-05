@@ -14,16 +14,24 @@ module.exports = {
       subcommand.setName("vote").setDescription("DMs Rust Server Vote Link")
     ),
   async execute(interaction) {
+    // Gets the subcommand
     let option = interaction.options.getSubcommand();
+
+    // If the subcommand is join, send the join link and log it.
     if (option === "join") {
+      // DMs join link to the user.
       interaction.member.user.send(join_link);
+      // Sends a notification to the log channel to alert admins.
       logger.send({ embeds: [link(interaction.member, option)] });
       interaction.reply({
         content: "We have send you the join link. Check your DMs",
         ephemeral: true,
       });
+      // If the subcommand is vote, send the vote link and log it.
     } else if (option === "vote") {
+      // DMs vote link to the user.
       interaction.member.user.send(vote_link);
+      // Sends a notification to the log channel to alert admins.
       logger.send({ embeds: [link(interaction.member, option)] });
       interaction.reply({
         content: "We have send you the vote link. Check your DMs",

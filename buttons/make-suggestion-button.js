@@ -8,10 +8,12 @@ const {
 module.exports = {
   data: { name: "make-suggestion-button" },
   async execute(interaction) {
+    // Create a modal with a single text input field.
     const supportModal = new ModalBuilder()
       .setCustomId("suggestion-modal")
       .setTitle("Make a Suggestion");
 
+    // Create a text input field.
     const issue = new TextInputBuilder()
       .setCustomId("suggestion")
       .setLabel("What's your suggestion")

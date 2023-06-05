@@ -24,6 +24,7 @@ const { interactionReply } = require("../libs/interactionReply");
  * @param {Integer} suggestionIndex
  * @returns void
  */
+// APPROVE SUGGESTION //
 async function approveSuggestion(
   interaction,
   suggestionsJson,
@@ -37,10 +38,10 @@ async function approveSuggestion(
         " cannot be approved as it has already been approved/rejected/implemented.",
       true
     );
-    return;
   } else if (suggestionsJson.suggestions[suggestionIndex].status == 0) {
     suggestionsJson.suggestions[suggestionIndex].status = 1;
 
+    // Delete original message from suggestions channel
     await deleteMessage(
       interaction.client,
       suggestions_channel,
@@ -62,8 +63,10 @@ async function approveSuggestion(
 
     let dateApproved = new Date().toISOString();
 
+    // Set embed timestamp to date approved
     suggestionsJson.suggestions[suggestionIndex].embed.timestamp = dateApproved;
 
+    // Set date approved in suggestionsJson
     suggestionsJson.suggestions[suggestionIndex].dateApproved = dateApproved;
 
     // Send message to suggestions channel
@@ -71,21 +74,24 @@ async function approveSuggestion(
       embeds: [suggestionsJson.suggestions[suggestionIndex].embed],
     });
 
+    // Log new state to log channel
     logger.send({
       embeds: [suggestionsJson.suggestions[suggestionIndex].embed],
     });
 
+    // Set messageId in suggestionsJson
     suggestionsJson.suggestions[suggestionIndex].messageId = message.id;
 
+    // Send message to user who suggested the suggestion
     interactionReply(
       interaction,
       `Suggestion ${suggestionsJson.suggestions[suggestionIndex].id} has been approved!`,
       true
     );
-    return;
   }
 }
-// Reject suggestion
+
+// REJECT SUGGESTION //
 async function rejectSuggestion(interaction, suggestionsJson, suggestionIndex) {
   // Check if suggestion is pending. If suggestion is pending, reject it. If not, send error message.
   if (suggestionsJson.suggestions[suggestionIndex].status != 0) {
@@ -94,7 +100,6 @@ async function rejectSuggestion(interaction, suggestionsJson, suggestionIndex) {
       `Suggestion ${suggestionsJson.suggestions[suggestionIndex].id} cannot be rejected as it has already been approved/rejected/implemented.`,
       true
     );
-    return;
   } else if (suggestionsJson.suggestions[suggestionIndex].status == 0) {
     // Set status to rejected
     suggestionsJson.suggestions[suggestionIndex].status = -1;
@@ -112,8 +117,9 @@ async function rejectSuggestion(interaction, suggestionsJson, suggestionIndex) {
 
     let dateRejected = new Date().toISOString();
 
+    // Set embed timestamp to date rejected
     suggestionsJson.suggestions[suggestionIndex].embed.timestamp = dateRejected;
-
+    // Set date rejected in suggestionsJson
     suggestionsJson.suggestions[suggestionIndex].dateRejected = dateRejected;
 
     // Send message to user to notify them that their suggestion has been rejected.
@@ -126,22 +132,25 @@ async function rejectSuggestion(interaction, suggestionsJson, suggestionIndex) {
       }
     );
 
+    // Log new state to log channel
     logger.send({
       embeds: [suggestionsJson.suggestions[suggestionIndex].embed],
     });
 
+    // Delete original message from suggestions channel
     deleteMessage(
       interaction.client,
       suggestions_channel,
       suggestionsJson.suggestions[suggestionIndex].messageId
     );
-  }
 
-  interactionReply(
-    interaction,
-    `Suggestion ${suggestionsJson.suggestions[suggestionIndex].id} has been rejected.`,
-    true
-  );
+    // Send message to user who suggested the suggestion
+    interactionReply(
+      interaction,
+      `Suggestion ${suggestionsJson.suggestions[suggestionIndex].id} has been rejected.`,
+      true
+    );
+  }
 }
 
 // Implement suggestion
@@ -160,7 +169,6 @@ async function implementedSuggestion(
       `Suggestion ${suggestionsJson.suggestions[suggestionIndex].id} cannot be rejected as it has already been rejected/implemented.`,
       true
     );
-    return;
   } else if (
     suggestionsJson.suggestions[suggestionIndex].status == 1 ||
     suggestionsJson.suggestions[suggestionIndex].status == 0
@@ -189,9 +197,10 @@ async function implementedSuggestion(
 
     let dateImplemented = new Date().toISOString();
 
+    // Set embed timestamp to date implemented
     suggestionsJson.suggestions[suggestionIndex].embed.timestamp =
       dateImplemented;
-
+    // Set date implemented in suggestionsJson
     suggestionsJson.suggestions[suggestionIndex].dateImplemented =
       dateImplemented;
 
@@ -213,7 +222,6 @@ async function implementedSuggestion(
       `Suggestion ${suggestionsJson.suggestions[suggestionIndex].id} has been implemented.`,
       true
     );
-    return;
   }
 }
 

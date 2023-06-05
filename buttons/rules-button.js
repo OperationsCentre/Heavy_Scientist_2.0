@@ -5,6 +5,7 @@ const { roles_channel } = require("../config/config.json").channels;
 module.exports = {
   data: { name: "rules-button" },
   async execute(interaction) {
+    // If the user has not agreed to the rules, give them the member role and send them a message
     if (!interaction.member.roles.cache.has(member_role)) {
       logger.send({ embeds: [rules_agree(interaction.member)] });
       interaction.member.roles.add(member_role);

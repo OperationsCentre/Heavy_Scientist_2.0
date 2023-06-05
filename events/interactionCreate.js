@@ -3,6 +3,7 @@ const { Events } = require("discord.js");
 module.exports = {
   name: Events.InteractionCreate,
   async execute(interaction) {
+    // If the interaction is a command, execute the command.
     if (interaction.isCommand()) {
       const command = interaction.client.commands.get(interaction.commandName);
 
@@ -19,7 +20,8 @@ module.exports = {
         console.error(`Error executing ${interaction.commandName}`);
         console.error(error);
       }
-    } else if (interaction.isButton()) {
+    } // If the interaction is a button, execute the button.
+    else if (interaction.isButton()) {
       const button = interaction.client.buttons.get(interaction.customId);
 
       if (!button) {
@@ -33,7 +35,8 @@ module.exports = {
         console.error(`Error executing ${interaction.customId}`);
         console.error(error);
       }
-    } else if (interaction.isModalSubmit()) {
+    } // If the interaction is a modal, execute the modal.
+    else if (interaction.isModalSubmit()) {
       const modal = interaction.client.modals.get(interaction.customId);
 
       if (!modal) {
@@ -47,7 +50,8 @@ module.exports = {
         console.error(`Error executing ${interaction.customId}`);
         console.error(error);
       }
-    } else if (interaction.isSelectMenu()) {
+    } // If the interaction is a select menu, execute the select menu.
+    else if (interaction.isSelectMenu()) {
       const select_menu = interaction.client.select_menu.get(
         interaction.customId
       );

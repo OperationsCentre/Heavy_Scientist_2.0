@@ -22,23 +22,28 @@ module.exports = {
     )
     .setDefaultMemberPermissions(PermissionsBitField.Flags.KickMembers),
   async execute(interaction) {
+    // Gets target user and reason for warning.
     let targetUser = interaction.options.getUser("user");
     let reason = interaction.options.getString("reason");
 
+    // Gets the warnings.json file.
     let warningsJson = JSON.parse(
       fs.readFileSync("./warnings/warnings.json", "utf8")
     );
 
+    // If the user doesn't have any warnings, create a new object for them.
     if (!warningsJson[targetUser.id]) {
       warningsJson[targetUser.id] = {
         warnings: 1,
         reasons: "`" + reason + "`\n",
       };
-    } else {
+    } // If the user does have warnings, add one to their warnings and add the reason to the reasons string.
+    else {
       warningsJson[targetUser.id].warnings += 1;
       warningsJson[targetUser.id].reasons += "`" + reason + "`\n";
     }
 
+    // Write the new warnings to the warnings.json file.
     fs.writeFile(
       "./warnings/warnings.json",
       JSON.stringify(warningsJson),
@@ -48,11 +53,13 @@ module.exports = {
       }
     );
 
+    // Reply to the user with a success message.
     interaction.reply({
       content: `You have successfully warned <@${targetUser.id}>`,
       ephemeral: true,
     });
 
+    // Send the warning embed to the logger channel.
     logger.send({
       embeds: [
         warn_user(
@@ -64,6 +71,7 @@ module.exports = {
       ],
     });
 
+    // If the user has 3 or more warnings, ping the admins so they can take action.
     if (warningsJson[targetUser.id].warnings >= 3) {
       logger.send(
         `<@&${admin_id}>. <@${targetUser.id}> now has ${

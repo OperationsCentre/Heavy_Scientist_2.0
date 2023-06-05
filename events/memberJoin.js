@@ -8,7 +8,9 @@ const { member_join } = require("../embeds/member_join");
 module.exports = {
   name: Events.GuildMemberAdd,
   once: false,
+  // when a member joins the server, send a message to the greeter channel and log it.
   async execute(member) {
+    // Create a picture of the member.
     const memberPicture = await createJoinPicture(member);
     greeter.send({
       content: `${member.user.toString()}`,
