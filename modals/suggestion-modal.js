@@ -29,7 +29,7 @@ module.exports = {
 
     embed.timestamp = dateCreated;
 
-    let message = sendMessage(interaction.client, suggestions_channel, {
+    let message = await sendMessage(interaction.client, suggestions_channel, {
       embeds: [embed],
     });
 
