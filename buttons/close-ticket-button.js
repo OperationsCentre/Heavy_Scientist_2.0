@@ -25,7 +25,7 @@ module.exports = {
     let ticketFile = Date.now() + "ticket";
 
     // write the log to a file
-    fs.appendFile(
+    fs.writeFile(
       "tickets/" + ticketFile + ".txt",
       log + "\n\n CLOSED BY: " + interaction.member.user.tag,
       function (err) {
