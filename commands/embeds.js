@@ -100,6 +100,7 @@ async function sendRoles(interaction) {
     fetchReply: true,
   });
 
+  /*
   //Rust Role
   let rustButtons = new ActionRowBuilder().addComponents(
     new ButtonBuilder()
@@ -108,13 +109,14 @@ async function sendRoles(interaction) {
       .setStyle(ButtonStyle.Secondary)
       .setEmoji(rust_emoji)
   );
-
   // Sends the embed and button for the rust role.
   message = await message.reply({
     embeds: [rust_role],
     components: [rustButtons],
     fetchReply: true,
   });
+
+  */
 
   //sends bottom image
   message.reply({ files: [attachment2] });
