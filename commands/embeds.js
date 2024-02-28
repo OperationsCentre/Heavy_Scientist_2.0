@@ -81,17 +81,29 @@ async function sendRoles(interaction) {
   //location roles here:
   let locationButtons = new ActionRowBuilder().addComponents(
     new ButtonBuilder()
-      .setCustomId("na-button")
+      .setCustomId("north_america-button")
       .setStyle(ButtonStyle.Secondary)
-      .setEmoji("1️⃣"),
+      .setEmoji(":one:"),
     new ButtonBuilder()
-      .setCustomId("eu-button")
+      .setCustomId("europe-button")
       .setStyle(ButtonStyle.Secondary)
-      .setEmoji("2️⃣"),
+      .setEmoji(":two:"),
     new ButtonBuilder()
-      .setCustomId("row-button")
+      .setCustomId("africa-button")
       .setStyle(ButtonStyle.Secondary)
-      .setEmoji("3️⃣")
+      .setEmoji(":three:"),
+    new ButtonBuilder()
+      .setCustomId("oceana-button")
+      .setStyle(ButtonStyle.Secondary)
+      .setEmoji(":four:"),
+    new ButtonBuilder()
+      .setCustomId("south_america-button")
+      .setStyle(ButtonStyle.Secondary)
+      .setEmoji(":five:"),
+    new ButtonBuilder()
+      .setCustomId("asia-button")
+      .setStyle(ButtonStyle.Secondary)
+      .setEmoji(":six:")
   );
   // Sends the embed and button for the location roles.
   message = await message.reply({
