@@ -1,0 +1,39 @@
+{
+  "channels": {
+    "roles_channel": "721368768093356094",
+    "suggestions_channel": "1106656849534656565",
+    "suggestions_implemented_channel": "1106656962734735410"
+  },
+  "category": {
+    "ticket_category": "947529213928427541",
+    "suggestions_category": "1106656500748922923"
+  },
+  "roles": {
+    "medjay_role": "786593800596357130",
+    "immortals_role": "917405625712001085",
+    "spartans_role": "1047156960769867916",
+    "centurion_role": "786591672770625548",
+    "eu_role": "1047157818999963648",
+    "na_role": "1047157742831423549",
+    "row_role": "1047158446602063913",
+    "rust_role": "870978829974384660",
+    "member_role": "672053262261813248",
+    "rust_staff_role": "947809960534867998"
+  },
+  "colours": { "rust_colour": "13724201", "log_colour": "3847248" },
+  "emojis": { "rust_emoji": "<:Rust:721800980147994656>" },
+  "images": {
+    "rust_logo": "https://operationscentre.github.io/community/img/rust-logo.jpg"
+  },
+  "status_list": [
+    "Welcome to the Rusty Operations",
+    "Can't see something? Go to the roles channel!",
+    "Why not join our Rust server?",
+    "All systems online!"
+  ],
+  "admin_id": "697047262081056828",
+  "join_link": "https://community.rustyoperations.com/join-rust",
+  "vote_link": "https://rust-servers.net/server/169289/",
+  "guild_id": "651455552517570586",
+  "client_id": "813799178689708104"
+}
